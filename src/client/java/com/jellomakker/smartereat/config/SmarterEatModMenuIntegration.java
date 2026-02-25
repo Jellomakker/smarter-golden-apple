@@ -25,6 +25,9 @@ public class SmarterEatModMenuIntegration implements ModMenuApi {
 
 		@Override
 		protected void init() {
+			int centerX = width / 2;
+			int centerY = height / 2;
+
 			// Enable/Disable toggle
 			addDrawableChild(ButtonWidget.builder(
 					getToggleText(),
@@ -32,12 +35,14 @@ public class SmarterEatModMenuIntegration implements ModMenuApi {
 						SmarterEatConfig.toggle();
 						button.setMessage(getToggleText());
 					})
-					.dimensions(width / 2 - 100, height / 2 - 40, 200, 20)
+					.dimensions(centerX - 100, centerY - 60, 200, 20)
 					.build());
 
+			// Potion cooldown label
 			// Potion cooldown input
-			cooldownField = new TextFieldWidget(textRenderer, width / 2 - 100, height / 2, 200, 20, Text.literal("Potion Cooldown (ms)"));
+			cooldownField = new TextFieldWidget(textRenderer, centerX - 100, centerY - 10, 200, 20, Text.literal("Potion Cooldown (ms)"));
 			cooldownField.setText(String.valueOf(SmarterEatConfig.getPotionCooldownMs()));
+			cooldownField.setMaxLength(4);
 			addDrawableChild(cooldownField);
 			setInitialFocus(cooldownField);
 
@@ -53,14 +58,14 @@ public class SmarterEatModMenuIntegration implements ModMenuApi {
 							cooldownField.setText(String.valueOf(SmarterEatConfig.getPotionCooldownMs()));
 						}
 					})
-					.dimensions(width / 2 - 100, height / 2 + 30, 95, 20)
+					.dimensions(centerX - 100, centerY + 20, 95, 20)
 					.build());
 
 			// Done button
 			addDrawableChild(ButtonWidget.builder(
 					Text.literal("Done"),
 					button -> close())
-					.dimensions(width / 2 + 5, height / 2 + 30, 95, 20)
+					.dimensions(centerX + 5, centerY + 20, 95, 20)
 					.build());
 		}
 
@@ -70,9 +75,10 @@ public class SmarterEatModMenuIntegration implements ModMenuApi {
 
 		@Override
 		public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+			this.renderBackground(context, mouseX, mouseY, delta);
 			super.render(context, mouseX, mouseY, delta);
-			context.drawCenteredTextWithShadow(textRenderer, title, width / 2, height / 2 - 60, 0xFFFFFF);
-			context.drawTextWithShadow(textRenderer, Text.literal("Potion Cooldown (ms):"), width / 2 - 150, height / 2 + 4, 0xAAAAAA);
+			context.drawCenteredTextWithShadow(textRenderer, title, width / 2, height / 2 - 85, 0xFFFFFF);
+			context.drawTextWithShadow(textRenderer, Text.literal("Potion Cooldown (ms):"), width / 2 - 100, height / 2 - 25, 0xFFFFFF);
 		}
 
 		@Override
