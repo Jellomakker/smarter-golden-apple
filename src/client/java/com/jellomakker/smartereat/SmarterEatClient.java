@@ -10,6 +10,7 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.PotionItem;
 import net.minecraft.util.Hand;
 import org.lwjgl.glfw.GLFW;
 
@@ -113,6 +114,10 @@ public class SmarterEatClient implements ClientModInitializer {
 			}
 
 		} else if (newPresses > 0) {
+			// Check if holding a potion – skip mod if so
+			if (isHoldingPotion(player)) {
+				return;
+			}
 			// Not force-holding yet: first click(s) detected
 			Hand foodHand = getFoodHand(player);
 			if (foodHand != null) {
@@ -221,5 +226,17 @@ public class SmarterEatClient implements ClientModInitializer {
 		aCopy.setCount(1);
 		bCopy.setCount(1);
 		return ItemStack.areItemsAndComponentsEqual(aCopy, bCopy);
+	}
+
+	private boolean isHoldingPotion(PlayerEntity player) {
+		ItemStack mainHand = player.getMainHandStack();
+		if (mainHand.getItem() instanceof PotionItem) {
+			return true;
+		}
+		ItemStack offHand = player.getOffHandStack();
+		if (offHand.getItem() instanceof PotionItem) {
+			return true;
+		}
+		return false;
 	}
 }
