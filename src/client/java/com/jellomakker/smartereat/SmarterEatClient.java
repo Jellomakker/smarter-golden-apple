@@ -33,6 +33,8 @@ public class SmarterEatClient implements ClientModInitializer {
 	private boolean wasEatingLastTick = false;
 	private int lastSelectedSlot = -1;
 	private int idleTickCount = 0;
+	private boolean wasHoldingPotionLastTick = false;
+	private long lastPotionThrowTime = 0;
 
 	@Override
 	public void onInitializeClient() {
@@ -50,6 +52,14 @@ public class SmarterEatClient implements ClientModInitializer {
 		PlayerEntity player = client.player;
 		KeyBinding useKey = client.options.useKey;
 		KeyBindingAccessor useKeyAccess = (KeyBindingAccessor) useKey;
+
+		// ── Track potion throws ──
+		boolean holdingPotionNow = isHoldingPotion(player);
+		if (wasHoldingPotionLastTick && !holdingPotionNow) {
+			// Transition from holding potion to not holding = potion was thrown
+			lastPotionThrowTime = System.currentTimeMillis();
+		}
+		wasHoldingPotionLastTick = holdingPotionNow;
 
 		// ── Cancel conditions ──
 
@@ -118,6 +128,10 @@ public class SmarterEatClient implements ClientModInitializer {
 			if (isHoldingPotion(player)) {
 				return;
 			}
+			// Check if in potion cooldown period – skip mod if so
+			if (isInPotionCooldown()) {
+				return;
+			}
 			// Not force-holding yet: first click(s) detected
 			Hand foodHand = getFoodHand(player);
 			if (foodHand != null) {
@@ -179,6 +193,7 @@ public class SmarterEatClient implements ClientModInitializer {
 		forceHolding = false;
 		wasEatingLastTick = false;
 		idleTickCount = 0;
+		// Note: do NOT reset potion tracking – we need to maintain cooldown state
 
 		if (wasForcing && client != null && client.options != null && client.getWindow() != null) {
 			restoreRealKeyState(client, client.options.useKey);
@@ -238,5 +253,10 @@ public class SmarterEatClient implements ClientModInitializer {
 			return true;
 		}
 		return false;
+	}
+
+	private boolean isInPotionCooldown() {
+		long elapsed = System.currentTimeMillis() - lastPotionThrowTime;
+		return elapsed < SmarterEatConfig.getPotionCooldownMs();
 	}
 }
