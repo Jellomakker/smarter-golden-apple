@@ -1,0 +1,42 @@
+{
+	"schemaVersion": 1,
+	"id": "smartereat",
+	"version": "${version}",
+	"name": "Smarter Eat",
+	"description": "Queue food consumption by right-clicking: 1 click eats 1, 2 clicks eat 2, and so on.",
+	"authors": [
+		"Jello"
+	],
+	"contact": {
+		"sources": "https://github.com/Jellomakker/smarter-golden-apple"
+	},
+	"license": "MIT",
+	"icon": "assets/smartereat/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.jellomakker.smartereat.SmarterEatMod"
+		],
+		"client": [
+			"com.jellomakker.smartereat.SmarterEatClient"
+		],
+		"modmenu": [
+			"com.jellomakker.smartereat.config.SmarterEatModMenuIntegration"
+		]
+	},
+	"mixins": [
+		{
+			"config": "smartereat.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.18.2",
+		"minecraft": ">=1.21.5",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"modmenu": "*"
+	}
+}

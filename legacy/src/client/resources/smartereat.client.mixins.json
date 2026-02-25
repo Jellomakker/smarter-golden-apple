@@ -1,0 +1,11 @@
+{
+	"required": true,
+	"package": "com.jellomakker.smartereat.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"client": [
+		"KeyBindingAccessor"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
